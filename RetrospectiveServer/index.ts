@@ -4,7 +4,7 @@ import * as http from 'http';
 import { debug } from 'debug';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-
+import { SocketServer } from './messages/socket-server';
 
 class Index {
 
@@ -15,6 +15,7 @@ class Index {
     private readonly port: number;
     private readonly app: Application;
     private server!: http.Server;
+    private socketServer: SocketServer;
     constructor() {
         dotenv.config();
         this.MONGODB_URI = process.env.MONGODB_URI || '';
@@ -56,6 +57,8 @@ class Index {
          */
         this.server = http.createServer(this.app);
 
+        this.socketServer = new SocketServer(this.server);
+
         /**
          * Listen on provided port, on all network interfaces.
          */
@@ -66,6 +69,7 @@ class Index {
         this.server.on('error', this.onError);
         this.server.on('listening', () => this.onListening());
 
+        this.socketServer.start();
     }
 
     /**
