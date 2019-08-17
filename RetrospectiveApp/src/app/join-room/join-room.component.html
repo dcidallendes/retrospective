@@ -20,6 +20,13 @@
       </mat-error>
     </mat-form-field>
 
+    <mat-form-field class="form-element" *ngIf="form.controls['createGroup'].value === true">
+      <input matInput placeholder="Group name" formControlName="groupName">
+      <mat-error *ngIf="!form.controls['groupName'].valid && form.controls['groupName'].touched">
+        Required field, must be between 5 and 50 characters.
+      </mat-error>
+    </mat-form-field>
+
     <div class="form-element">
       <button mat-raised-button color="primary" type="submit" class="button" [disabled]="!form.valid">Join !</button>
     </div>

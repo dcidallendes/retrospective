@@ -1,32 +1,57 @@
 
 import { Request, Response, Router, NextFunction } from 'express';
-import note from '../models/note';
+import note, { Note } from '../models/note';
 
 
 export class NotesRoute {
     public static create(): Router {
         const router = Router();
         /* GET the data for the given note id*/
-        router.get('/:id', (req: Request, res: Response, next: NextFunction) => {
-            note.findById(req.params.id).then((foundNote: any) => {
-                if (foundNote) {
-                    res.json(foundNote);
-                } else {
-                    res.status(404).json('Note not found');
-                }
-            }).catch(() => {
-                res.status(500).json('Unable to get note');
-            });
+        router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
+            const foundNote = await note.findById(req.params.id);
+            if (foundNote) {
+                res.json(foundNote);
+            } else {
+                res.sendStatus(404);
+            }
         });
 
         /* Create a new note*/
-        router.post('/', (req: Request, res: Response) => {
-            note.create()
+        router.post('/', async (req: Request, res: Response) => {
+            if(!req.body) {
+                res.sendStatus(403);
+            }
+            const newNote: Note = req.body; 
+            const createdNote = await note.create(newNote);
+            if(createdNote) {
+                res.json(createdNote);
+            } else {
+                res.sendStatus(403);
+            }
         });
 
         /* Update an existing note */
-        router.put('/:id', (req: Request, res: Response) => {
+        router.put('/:id', async (req: Request, res: Response) => {
+            if(!req.body) {
+                res.sendStatus(403);
+            }
+            const newNote: Note = req.body; 
+            const updatedNote = await note.updateOne({_id: req.params.id}, newNote);
+            if(updatedNote) {
+                res.json(updatedNote);
+            } else {
+                res.sendStatus(403);
+            }
+        });
 
+        /* GET notes by retrospective id */
+        router.get('/retrospective/:id', async (req: Request, res: Response) => {
+            const notes = await note.find({retrospective: req.params.id});
+            if(notes) {
+                res.json(notes);
+            } else {
+                res.sendStatus(404);
+            }
         });
 
         return router;

@@ -2,18 +2,18 @@ import mongoose, { Schema, Document } from 'mongoose';
 
 export interface Retrospective extends Document{
     name: String;
-    shortCode: String;
+    code: String;
 }
 
 // Declare the Schema of the Mongo model
 var retrospectiveSchema = new Schema({
     name:{
-        type:String,
+        type: String,
         required:true,
     },
-    shortCode:{
-        type: String ,
-        required:true,
+    code: {
+        type: String,
+        unique: true
     }
 });
 

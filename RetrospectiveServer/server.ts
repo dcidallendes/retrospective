@@ -6,6 +6,7 @@ import * as path from "path";
 import { IndexRoute } from "./routes";
 import { RetrospectivesRoute } from "./routes/retrospectives";
 import { NotesRoute } from "./routes/notes";
+import cors from 'cors';
 import 'reflect-metadata';
 import * as swagger from "swagger-express-ts";
 
@@ -55,6 +56,7 @@ export class Server {
    */
   private config() {
     this.app.use(logger('dev'));
+    this.app.use(cors());
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
     this.app.use(cookieParser());

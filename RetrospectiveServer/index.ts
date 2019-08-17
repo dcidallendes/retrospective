@@ -15,7 +15,7 @@ class Index {
     private readonly port: number;
     private readonly app: Application;
     private server!: http.Server;
-    private socketServer: SocketServer;
+    private socketServer!: SocketServer;
     constructor() {
         dotenv.config();
         this.MONGODB_URI = process.env.MONGODB_URI || '';
