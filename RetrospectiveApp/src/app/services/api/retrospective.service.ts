@@ -15,11 +15,15 @@ export class RetrospectiveService {
     return this.httpClient.get<Retrospective>(`${this.apiUrl}/retrospectives/${id}`);
   }
 
+  public getByCode(code: any): Observable<Retrospective> {
+    return this.httpClient.get<Retrospective>(`${this.apiUrl}/retrospectives/code/${code}`);
+  }
+
   public create(name: string): Observable<Retrospective> {
     return this.httpClient.post(`${this.apiUrl}/retrospectives/${name}`, {});
   }
 
   public update(retrospective: Retrospective): Observable<Retrospective> {
-    return this.httpClient.post(`${this.apiUrl}/retrospectives/${retrospective.id}`, retrospective);
+    return this.httpClient.post(`${this.apiUrl}/retrospectives/${retrospective._id}`, retrospective);
   }
 }

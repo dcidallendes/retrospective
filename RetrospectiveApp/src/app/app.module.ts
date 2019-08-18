@@ -1,7 +1,8 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
-import {MatToolbarModule, MatCardModule, MatFormFieldModule, MatInputModule, MatDividerModule, MatButtonModule, MatSlideToggleModule} from '@angular/material';
+import {MatToolbarModule, MatCardModule, MatFormFieldModule, MatInputModule, MatDividerModule, MatButtonModule, MatSlideToggleModule, MatGridListModule, MatListModule, MatIconModule} from '@angular/material';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -34,7 +35,11 @@ import { NotesPanelComponent } from './notes-panel/notes-panel.component';
     MatInputModule,
     MatDividerModule,
     MatButtonModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    MatGridListModule,
+    MatListModule,
+    MatIconModule,
+    FlexLayoutModule
   ],
   providers: [FormBuilder],
   bootstrap: [AppComponent]

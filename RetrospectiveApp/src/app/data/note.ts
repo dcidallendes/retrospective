@@ -1,5 +1,6 @@
 export class Note {
-  id: any;
+  _id: any;
   content: string;
-  type: string;
+  type: number;
+  retrospective: string;
 }
