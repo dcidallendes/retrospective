@@ -8,6 +8,8 @@ import { NoteTypes } from '../data/note-types.enum';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Retrospective } from '../data/retrospective';
 import { MessagesService } from '../services/messages/messages.service';
+import { AuthService, GoogleLoginProvider, SocialUser } from 'angularx-social-login';
+import { MatSnackBar } from '@angular/material';
 
 @Component({
   selector: 'app-notes-panel',
@@ -17,7 +19,7 @@ import { MessagesService } from '../services/messages/messages.service';
 export class NotesPanelComponent implements OnInit {
 
 
-  private readonly noteTypeHeaders: Map<NoteTypes, string> = new Map<NoteTypes, string> ( [
+  private readonly noteTypeHeaders: Map<NoteTypes, string> = new Map<NoteTypes, string>([
     [NoteTypes.like, 'What did you like?'],
     [NoteTypes.lack, 'What was lacking?'],
     [NoteTypes.learn, 'What did you learn?'],
@@ -32,26 +34,55 @@ export class NotesPanelComponent implements OnInit {
   currentCreationNoteType?: NoteTypes = null;
   createdNoteContent: string;
   form: FormGroup;
+  user: SocialUser;
+  firstSignIn = true;
 
   constructor(private readonly router: Router,
               private readonly activatedRoute: ActivatedRoute,
               private readonly retrospectiveApi: RetrospectiveService,
               private readonly noteApi: NoteService,
               private readonly formBuilder: FormBuilder,
-              private readonly messagesClient: MessagesService) {
-              }
+              private readonly messagesClient: MessagesService,
+              private readonly authService: AuthService,
+              private readonly snackBar: MatSnackBar) {
+  }
 
-  ngOnInit() {
+  get isLoggedIn(): boolean {
+    return !!this.user;
+  }
+
+  async ngOnInit() {
     this.retrospectiveCode = this.activatedRoute.snapshot.params.id;
     this.createForm();
-    this.getRetrospectiveAndNotes();
+    this.verifyLogin();
+  }
+
+  private verifyLogin() {
+    this.authService.authState.subscribe(async socialUser => {
+      this.user = socialUser;
+      if ((!socialUser || !socialUser.email) && this.firstSignIn) {
+        this.firstSignIn  = false;
+        this.authService.signIn(GoogleLoginProvider.PROVIDER_ID);
+        this.snackBar.open('Please login using a Google account. Verify if the login popup is blocked by your browser');
+        try {
+          this.user = await this.authService.signIn(GoogleLoginProvider.PROVIDER_ID);
+        } catch {
+          this.snackBar.open('You need to log in order to post and view retrospective notes');
+        }
+      }
+      if (this.isLoggedIn) {
+        this.getRetrospectiveAndNotes();
+      } else {
+        this.goToMainPage();
+      }
+    });
   }
 
   private initializeMessagesClient() {
-    this.messagesClient.join(this.retrospective.code, '');
+    this.messagesClient.join(this.retrospective.code, this.user.email);
     this.messagesClient.onNoteCreated.subscribe(async message => {
       const newNote = await this.noteApi.getById(message.noteId).toPromise();
-      if (newNote)  {
+      if (newNote) {
         this.insertOrReplaceNote(newNote);
       }
     });
@@ -76,12 +107,12 @@ export class NotesPanelComponent implements OnInit {
 
   private getRetrospectiveAndNotes() {
     this.retrospectiveApi.getByCode(this.retrospectiveCode).subscribe(async (retrospective) => {
-      this.retrospective =  retrospective;
+      this.retrospective = retrospective;
       if (retrospective) {
         this.initializeMessagesClient();
         this.notes = await this.noteApi.getByRetrospectiveId(retrospective._id).toPromise();
       } else {
-        this.router.navigate(['']);
+        this.goToMainPage();
       }
     });
   }
@@ -91,8 +122,12 @@ export class NotesPanelComponent implements OnInit {
     this.form.reset();
   }
 
+  private goToMainPage() {
+    this.router.navigate(['']);
+  }
+
   public getNotesByType(noteType: NoteTypes): Note[] {
-    const notes = _.filter(this.notes, {type: noteType});
+    const notes = _.filter(this.notes, { type: noteType });
     return notes;
   }
 

@@ -1,4 +1,4 @@
-<div fxLayout="row" fxLayout.xs="column">
+<div fxLayout="row" fxLayout.xs="column" *ngIf="isLoggedIn">
   <mat-card *ngFor="let noteType of noteTypes">
     <mat-card-content>
       <mat-list>

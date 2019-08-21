@@ -27,7 +27,6 @@ export class JoinRoomComponent implements OnInit {
   private createForm() {
     this.form = this.formBuilder.group({
       groupCode:  [null],
-      displayName: [null, [Validators.required, Validators.maxLength(50), Validators.minLength(3)]],
       createGroup: [true],
       groupName: [null, this.groupValidators]
     });
@@ -47,8 +46,8 @@ export class JoinRoomComponent implements OnInit {
     });
   }
 
-  private goToNotePanel(retrospectiveCode: string, name: string) {
-    this.router.navigate(['r/', retrospectiveCode], {state:{ name}});
+  private goToNotePanel(retrospectiveCode: string) {
+    this.router.navigate(['r/', retrospectiveCode]);
   }
 
   onSubmit(formValue: any) {
@@ -56,13 +55,13 @@ export class JoinRoomComponent implements OnInit {
       this.retrospectiveApi.create(formValue.groupName).subscribe( (retrospective) => {
         console.log(retrospective);
         if (retrospective) {
-          this.goToNotePanel(retrospective.code, formValue.displayName);
+          this.goToNotePanel(retrospective.code);
         } else {
           console.log('Error');
         }
       });
     } else {
-      this.goToNotePanel(formValue.groupCode, formValue.displayName);
+      this.goToNotePanel(formValue.groupCode);
     }
   }
 }

@@ -1,0 +1,10 @@
+<ng-container *ngIf="isLoggedIn">
+    <mat-menu #appMenu="matMenu">
+        <button mat-menu-item  (click)="onLogoutClick()">Log out</button>
+      </mat-menu>
+    <button mat-icon-button [matMenuTriggerFor]="appMenu">
+        <ngx-avatar [src]="user.photoUrl"></ngx-avatar>
+    </button>
+
+</ng-container>
+
