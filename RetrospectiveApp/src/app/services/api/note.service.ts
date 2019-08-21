@@ -16,6 +16,10 @@ export class NoteService {
     return this.httpClient.get<Note[]>(`${this.apiUrl}/notes/retrospective/${retrospectiveId}`);
   }
 
+  public getById(noteId: any): Observable<Note> {
+    return this.httpClient.get<Note>(`${this.apiUrl}/notes/${noteId}`);
+  }
+
   public create(note: Note): Observable<Note> {
     return this.httpClient.post<Note>(`${this.apiUrl}/notes/`, note);
   }

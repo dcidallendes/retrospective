@@ -11,7 +11,17 @@ export class RetrospectivesRoute {
       if (retro) {
         res.json(retro);
       } else {
-        res.sendStatus(404);
+        res.json(null);
+      }
+    });
+
+    /* GET the data of the given retrospective id*/
+    router.get('/code/:code', async (req: Request, res: Response, next: NextFunction) => {
+      const retro = await retrospective.findOne({code: req.params.code});
+      if (retro) {
+        res.json(retro);
+      } else {
+        res.json(null);
       }
     });
 
@@ -26,7 +36,7 @@ export class RetrospectivesRoute {
       if (newRetro) {
         res.json(newRetro);
       } else {
-        res.sendStatus(403);
+        res.json(null);
       }
       
     });

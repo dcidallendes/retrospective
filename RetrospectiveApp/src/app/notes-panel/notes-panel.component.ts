@@ -7,6 +7,7 @@ import * as _ from 'lodash';
 import { NoteTypes } from '../data/note-types.enum';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Retrospective } from '../data/retrospective';
+import { MessagesService } from '../services/messages/messages.service';
 
 @Component({
   selector: 'app-notes-panel',
@@ -36,13 +37,33 @@ export class NotesPanelComponent implements OnInit {
               private readonly activatedRoute: ActivatedRoute,
               private readonly retrospectiveApi: RetrospectiveService,
               private readonly noteApi: NoteService,
-              private readonly formBuilder: FormBuilder) {
+              private readonly formBuilder: FormBuilder,
+              private readonly messagesClient: MessagesService) {
               }
 
   ngOnInit() {
     this.retrospectiveCode = this.activatedRoute.snapshot.params.id;
     this.createForm();
     this.getRetrospectiveAndNotes();
+  }
+
+  private initializeMessagesClient() {
+    this.messagesClient.join(this.retrospective.code, '');
+    this.messagesClient.onNoteCreated.subscribe(async message => {
+      const newNote = await this.noteApi.getById(message.noteId).toPromise();
+      if (newNote)  {
+        this.insertOrReplaceNote(newNote);
+      }
+    });
+  }
+
+  private insertOrReplaceNote(note: Note) {
+    const oldNoteIndex = this.notes.findIndex(n => n._id === note._id);
+    if (oldNoteIndex >= 0) {
+      this.notes[oldNoteIndex] = note;
+    } else {
+      this.notes.push(note);
+    }
   }
 
   private createForm() {
@@ -54,12 +75,11 @@ export class NotesPanelComponent implements OnInit {
   }
 
   private getRetrospectiveAndNotes() {
-    this.retrospectiveApi.getByCode(this.retrospectiveCode).subscribe( (retrospective) => {
+    this.retrospectiveApi.getByCode(this.retrospectiveCode).subscribe(async (retrospective) => {
       this.retrospective =  retrospective;
       if (retrospective) {
-        this.noteApi.getByRetrospectiveId(retrospective._id).subscribe(notes => {
-          this.notes = notes;
-        });
+        this.initializeMessagesClient();
+        this.notes = await this.noteApi.getByRetrospectiveId(retrospective._id).toPromise();
       } else {
         this.router.navigate(['']);
       }
@@ -73,7 +93,6 @@ export class NotesPanelComponent implements OnInit {
 
   public getNotesByType(noteType: NoteTypes): Note[] {
     const notes = _.filter(this.notes, {type: noteType});
-    console.log(this.notes, notes);
     return notes;
   }
 
@@ -89,17 +108,16 @@ export class NotesPanelComponent implements OnInit {
     this.clearNewNoteForm();
   }
 
-  public onCreateNoteClick(noteType: NoteTypes) {
+  public async onCreateNoteClick(noteType: NoteTypes) {
     const newNote = {} as Note;
     newNote.content = this.form.get('createdNoteContent').value;
     newNote.retrospective = this.retrospective._id;
     newNote.type = noteType;
-    this.noteApi.create(newNote).subscribe(createdNote => {
-      if (createdNote) {
-        this.notes.push(createdNote);
-        this.clearNewNoteForm();
-      }
-    });
+    const createdNote = await this.noteApi.create(newNote).toPromise();
+    if (createdNote) {
+      this.notes.push(createdNote);
+      this.clearNewNoteForm();
+      this.messagesClient.sendNoteCreatedMessage(createdNote._id);
+    }
   }
-
 }

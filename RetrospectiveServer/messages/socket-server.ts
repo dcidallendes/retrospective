@@ -12,7 +12,7 @@ export class SocketServer {
     private configureListeners() {
         this.io.on('connection', (socket: socketIo.Socket) => {
             socket.on(EventNames.join, async (message: JoinMessage) => {
-                const exists = await retrospective.exists( {name: message.retrospectiveGroup});
+                const exists = await retrospective.exists( {code: message.retrospectiveGroup});
                 if (exists) {
                     socket.join(message.retrospectiveGroup);
                     this.io.sockets.to(message.retrospectiveGroup).emit(EventNames.userJoined, message.name);

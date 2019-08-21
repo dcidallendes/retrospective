@@ -1,9 +1,10 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import { Retrospective } from './retrospective';
 
+
 export interface Note extends Document{
     content: String;
-    type: String;
+    type: Number;
     retrospective: Retrospective['_id'];
 }
 // Declare the Schema of the Mongo model
@@ -14,7 +15,7 @@ const noteSchema = new Schema({
         maxlength: 500
     },
     type: {
-        type: String,
+        type: Number,
         required: true,
         index: true,
     },
