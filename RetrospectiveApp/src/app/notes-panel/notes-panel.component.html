@@ -1,43 +1,61 @@
-<div fxLayout="row" fxLayout.xs="column" *ngIf="isLoggedIn">
-  <mat-card *ngFor="let noteType of noteTypes">
-    <mat-card-content>
-      <mat-list>
-        <div matSubheader>
-          <span>{{getNoteTypeHeader(noteType)}}</span>
-          <span class="spacer"></span>
-          <button mat-icon-button (click)="onShowCreateNoteClick(noteType)">
-            <mat-icon>add</mat-icon>
-          </button>
-        </div>
-
-        <mat-list-item *ngIf="currentCreationNoteType === noteType">
-          <div fxLayout="row" fxLayoutAlign="space-between center">
-            <form *ngIf="form" [formGroup]="form" (ngSubmit)="onCreateNoteClick(noteType)">
-              <mat-form-field>
-                <textarea formControlName="createdNoteContent" matInput placeholder="New note" minlength="5"
-                  maxlength="100"></textarea>
-                <mat-error
-                  *ngIf="!form.controls['createdNoteContent'].valid && form.controls['createdNoteContent'].touched">
-                  Required field, must be between 5 and 100 characters.
-                </mat-error>
-              </mat-form-field>
-              <button mat-icon-button type="submit" [disabled]="!form.valid">
-                <mat-icon>check</mat-icon>
-              </button>
-              <button mat-icon-button (click)="onHideCreateNoteClick()">
-                <mat-icon>delete</mat-icon>
-              </button>
-            </form>
+<div class="container">
+  <div fxLayout="row" fxLayout.xs="column" *ngIf="isLoggedIn" fxLayoutGap="20px">
+    <mat-card *ngFor="let noteType of noteTypes">
+      <mat-card-content>
+        <mat-list role="list">
+          <div matSubheader>
+            <span>{{getNoteTypeHeader(noteType)}}</span>
+            <span class="spacer"></span>
+            <button mat-icon-button (click)="onShowCreateNoteClick(noteType)">
+              <mat-icon>add</mat-icon>
+            </button>
           </div>
-        </mat-list-item>
 
-        <ng-container *ngIf="notes">
-          <mat-list-item *ngFor="let note of getNotesByType(noteType)">
-            <p>{{note.content}}
-            </p>
+          <mat-list-item *ngIf="currentCreationNoteType === noteType" role="listitem">
+            <div fxLayout="row" fxLayoutAlign="space-around center">
+              <form *ngIf="form" [formGroup]="form" (ngSubmit)="onCreateNoteClick(noteType)">
+                <mat-form-field>
+                  <textarea formControlName="createdNoteContent" matInput placeholder="New note" minlength="5"
+                    maxlength="100"></textarea>
+                  <mat-error
+                    *ngIf="!form.controls['createdNoteContent'].valid && form.controls['createdNoteContent'].touched">
+                    Required field, must be between 5 and 100 characters.
+                  </mat-error>
+                </mat-form-field>
+                <button mat-icon-button type="submit" [disabled]="!form.valid">
+                  <mat-icon>check</mat-icon>
+                </button>
+                <button mat-icon-button (click)="onHideCreateNoteClick()">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </form>
+            </div>
           </mat-list-item>
-        </ng-container>
-      </mat-list>
-    </mat-card-content>
-  </mat-card>
+
+
+
+          <ng-container *ngIf="notes">
+            <mat-list-item *ngFor="let note of getNotesByType(noteType)">
+              <div class="noteContainer">
+                <div>
+                  <p>
+                    <span> {{note.content}}</span>
+                  </p>
+                </div>
+                <div>
+                  <span class="mat-caption">Votes: {{note.votes ? note.votes.length : 0}} </span>
+                  <button mat-icon-button (click)="onAddVoteClick(note)" [disabled]="!canVote(note)">
+                    <mat-icon class="mat-24">thumb_up</mat-icon>
+                  </button>
+                </div>
+              </div>
+
+
+
+            </mat-list-item>
+          </ng-container>
+        </mat-list>
+      </mat-card-content>
+    </mat-card>
+  </div>
 </div>

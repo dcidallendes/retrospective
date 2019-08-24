@@ -9,3 +9,23 @@
 .spacer {
   flex: 1 1 auto;
 }
+
+.container {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+::ng-deep .mat-list .mat-list-item .mat-line{
+  word-wrap: break-word;
+ white-space: pre-wrap;
+}
+
+.noteContainer {
+  display: flex;
+  flex-flow: row;
+  justify-content: space-between;
+  height: 0%;
+  align-items: center;
+  flex-grow: 3;
+}

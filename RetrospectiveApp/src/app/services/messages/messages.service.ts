@@ -11,9 +11,11 @@ import { JoinMessage } from './join-message';
 export class MessagesService {
 
   private noteCreatedObservable: Subject<UpdateMessage>;
+  private noteUpdatedObservable: Subject<UpdateMessage>;
 
   constructor(private readonly socket: Socket) {
     this.noteCreatedObservable = new Subject();
+    this.noteUpdatedObservable = new Subject();
     this.setEvents();
 
    }
@@ -22,11 +24,19 @@ export class MessagesService {
     this.socket.on(EventNames.noteCreated, (updateMessage: UpdateMessage) => {
       this.noteCreatedObservable.next(updateMessage);
     });
+    this.socket.on(EventNames.noteUpdated, (updateMessage: UpdateMessage) => {
+      this.noteUpdatedObservable.next(updateMessage);
+    });
    }
 
   public sendNoteCreatedMessage(noteId: string) {
     const msg: UpdateMessage = {noteId};
     this.socket.emit(EventNames.broadcastNoteCreated, msg);
+  }
+
+  public sendNoteUpdatedMessage(noteId: string) {
+    const msg: UpdateMessage = {noteId};
+    this.socket.emit(EventNames.broadcastNoteUpdated, msg);
   }
 
   public join(retrospectiveCode: string, name: string) {
@@ -36,5 +46,9 @@ export class MessagesService {
 
   public get onNoteCreated(): Subject<UpdateMessage> {
     return this.noteCreatedObservable;
+  }
+
+  public get onNoteUpdated(): Subject<UpdateMessage> {
+    return this.noteUpdatedObservable;
   }
 }

@@ -3,8 +3,14 @@ import socketIo from 'socket.io';
 import retrospective from '../models/retrospective';
 import { JoinMessage } from './join-message';
 import { EventNames } from './event-names';
+import { UserData } from './user-data';
 
 export class SocketServer {
+
+
+    private usersData:  Map<string, UserData> = new Map<string, UserData>();
+
+
     private io!: SocketIO.Server;
     constructor(private readonly server: Server) {
     }

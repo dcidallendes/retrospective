@@ -54,6 +54,16 @@ export class NotesRoute {
             }
         });
 
+        /* POST a vote for a given note and user */
+        router.post('/:id/vote/:userId', async (req: Request, res: Response) => {
+            const notes = await note.findByIdAndUpdate(req.params.id, { '$addToSet': { 'votes': req.params.userId } });
+            if(notes) {
+                res.json(notes);
+            } else {
+                res.json(null);
+            }
+        });
+
         return router;
     }
 }

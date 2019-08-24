@@ -27,4 +27,8 @@ export class NoteService {
   public update(note: Note): Observable<Note>  {
     return this.httpClient.post<Note>(`${this.apiUrl}/notes/${note._id}`, note);
   }
+
+  public addVote(noteId: any, userId: string): Observable<Note> {
+    return this.httpClient.post<Note>(`${this.apiUrl}/notes/${noteId}/vote/${userId}`, {});
+  }
 }

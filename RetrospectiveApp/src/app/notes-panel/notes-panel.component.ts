@@ -80,12 +80,15 @@ export class NotesPanelComponent implements OnInit {
 
   private initializeMessagesClient() {
     this.messagesClient.join(this.retrospective.code, this.user.email);
-    this.messagesClient.onNoteCreated.subscribe(async message => {
-      const newNote = await this.noteApi.getById(message.noteId).toPromise();
-      if (newNote) {
-        this.insertOrReplaceNote(newNote);
-      }
-    });
+    this.messagesClient.onNoteCreated.subscribe(async message => this.getNoteAndInsert(message.noteId));
+    this.messagesClient.onNoteUpdated.subscribe(async message => this.getNoteAndInsert(message.noteId));
+  }
+
+  private async getNoteAndInsert(noteId: any) {
+    const newNote = await this.noteApi.getById(noteId).toPromise();
+    if (newNote) {
+      this.insertOrReplaceNote(newNote);
+    }
   }
 
   private insertOrReplaceNote(note: Note) {
@@ -143,16 +146,32 @@ export class NotesPanelComponent implements OnInit {
     this.clearNewNoteForm();
   }
 
+  public canVote(note: Note): boolean {
+    if (note.votes && note.votes.length > 0) {
+      return !note.votes.includes(this.user.id);
+    } else {
+      return true;
+    }
+  }
+
   public async onCreateNoteClick(noteType: NoteTypes) {
     const newNote = {} as Note;
     newNote.content = this.form.get('createdNoteContent').value;
     newNote.retrospective = this.retrospective._id;
     newNote.type = noteType;
+    newNote.userId = this.user.id;
     const createdNote = await this.noteApi.create(newNote).toPromise();
     if (createdNote) {
       this.notes.push(createdNote);
       this.clearNewNoteForm();
       this.messagesClient.sendNoteCreatedMessage(createdNote._id);
+    }
+  }
+
+  public async onAddVoteClick(note: Note) {
+    const updatedNote = await this.noteApi.addVote(note._id, this.user.id).toPromise();
+    if (updatedNote) {
+      this.messagesClient.sendNoteUpdatedMessage(updatedNote._id);
     }
   }
 }
