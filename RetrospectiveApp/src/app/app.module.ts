@@ -20,12 +20,13 @@ import { UserToolbarComponent } from './user-toolbar/user-toolbar.component';
 import { SocialLoginModule, AuthServiceConfig } from 'angularx-social-login';
 import { GoogleLoginProvider } from 'angularx-social-login';
 import { AvatarModule } from 'ngx-avatar';
+import { environment } from 'src/environments/environment';
 
-const socketConfig: SocketIoConfig = { url: 'http://127.0.0.1:3001', options: {} };
+const socketConfig: SocketIoConfig = { url: environment.messagesUrl, options: {} };
 const authConfig = new AuthServiceConfig([
   {
     id: GoogleLoginProvider.PROVIDER_ID,
-    provider: new GoogleLoginProvider('900755923248-oo0skmfij7gflaik0qspnt185rjlqp8h.apps.googleusercontent.com')
+    provider: new GoogleLoginProvider(environment.googleClientId)
   }
 ]);
 

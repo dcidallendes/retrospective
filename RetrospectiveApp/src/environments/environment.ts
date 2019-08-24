@@ -3,7 +3,10 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  apiUrl: 'http://127.0.0.1:3001/api/v1',
+  messagesUrl: 'http://127.0.0.1:3001',
+  googleClientId: '900755923248-oo0skmfij7gflaik0qspnt185rjlqp8h.apps.googleusercontent.com'
 };
 
 /*

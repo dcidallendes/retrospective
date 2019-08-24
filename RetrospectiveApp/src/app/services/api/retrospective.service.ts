@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { Retrospective } from 'src/app/data/retrospective';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RetrospectiveService {
 
-  private readonly apiUrl = 'http://127.0.0.1:3001/api/v1';
+  private readonly apiUrl = environment.apiUrl;
   constructor(private readonly httpClient: HttpClient) { }
 
   public getById(id: any): Observable<Retrospective> {
