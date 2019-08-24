@@ -1,5 +1,16 @@
 <div class="container" *ngIf="isLoggedIn">
-  <h2 *ngIf="retrospective">{{retrospective.name}}</h2>
+  <div class="contentContainer">
+    <span *ngIf="retrospective" class="mat-title">{{retrospective.name}}</span>
+    <span class="spacer"></span>
+
+    <mat-menu #appMenu="matMenu">
+      <button mat-menu-item (click)="onExportToExcelClick()">Export to Excel</button>
+    </mat-menu>
+    <button mat-icon-button [matMenuTriggerFor]="appMenu">
+      <mat-icon>menu</mat-icon>
+    </button>
+  </div>
+
   <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="20px">
     <mat-card *ngFor="let noteType of noteTypes">
       <mat-card-content>
@@ -11,7 +22,6 @@
               <mat-icon>add</mat-icon>
             </button>
           </div>
-
           <mat-list-item *ngIf="currentCreationNoteType === noteType" role="listitem">
             <div fxLayout="row" fxLayoutAlign="space-around center">
               <form *ngIf="form" [formGroup]="form" (ngSubmit)="onCreateNoteClick(noteType)">
@@ -32,12 +42,9 @@
               </form>
             </div>
           </mat-list-item>
-
-
-
           <ng-container *ngIf="notes">
             <mat-list-item *ngFor="let note of getNotesByType(noteType)">
-              <div class="noteContainer">
+              <div class="contentContainer">
                 <div>
                   <p>
                     <span> {{note.content}}</span>
@@ -50,9 +57,6 @@
                   </button>
                 </div>
               </div>
-
-
-
             </mat-list-item>
           </ng-container>
         </mat-list>

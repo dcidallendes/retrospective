@@ -10,6 +10,7 @@ import { Retrospective } from '../data/retrospective';
 import { MessagesService } from '../services/messages/messages.service';
 import { AuthService, GoogleLoginProvider, SocialUser } from 'angularx-social-login';
 import { MatSnackBar } from '@angular/material';
+import { ExcelService } from '../services/excel.service';
 
 @Component({
   selector: 'app-notes-panel',
@@ -39,13 +40,14 @@ export class NotesPanelComponent implements OnInit {
   firstSignIn = true;
 
   constructor(private readonly router: Router,
-              private readonly activatedRoute: ActivatedRoute,
-              private readonly retrospectiveApi: RetrospectiveService,
-              private readonly noteApi: NoteService,
-              private readonly formBuilder: FormBuilder,
-              private readonly messagesClient: MessagesService,
-              private readonly authService: AuthService,
-              private readonly snackBar: MatSnackBar) {
+    private readonly activatedRoute: ActivatedRoute,
+    private readonly retrospectiveApi: RetrospectiveService,
+    private readonly noteApi: NoteService,
+    private readonly formBuilder: FormBuilder,
+    private readonly messagesClient: MessagesService,
+    private readonly authService: AuthService,
+    private readonly snackBar: MatSnackBar,
+    private readonly excelService: ExcelService) {
   }
 
   get isLoggedIn(): boolean {
@@ -62,7 +64,7 @@ export class NotesPanelComponent implements OnInit {
     this.authService.authState.subscribe(async socialUser => {
       this.user = socialUser;
       if ((!socialUser || !socialUser.email) && this.firstSignIn) {
-        this.firstSignIn  = false;
+        this.firstSignIn = false;
         this.authService.signIn(GoogleLoginProvider.PROVIDER_ID);
         this.snackBar.open('Please login using a Google account. Verify if the login popup is blocked by your browser');
         try {
@@ -174,5 +176,13 @@ export class NotesPanelComponent implements OnInit {
     if (updatedNote) {
       this.messagesClient.sendNoteUpdatedMessage(updatedNote._id);
     }
+  }
+
+  public onExportToExcelClick() {
+    const data = [];
+    const sortedNotes: Note[] = _.orderBy(this.notes, ['type', 'votes.length', 'content'], ['asc', 'desc', 'asc']);
+    sortedNotes.forEach(n => data.push(
+      { type: this.noteTypeHeaders.get(n.type), note: n.content, votes: n.votes.length }));
+    this.excelService.exportAsExcelFile(data, this.retrospective.name);
   }
 }
