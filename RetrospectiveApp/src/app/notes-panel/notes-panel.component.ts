@@ -28,7 +28,8 @@ export class NotesPanelComponent implements OnInit {
   public readonly noteTypes = [NoteTypes.like, NoteTypes.lack, NoteTypes.learn, NoteTypes.longFor];
 
   private retrospectiveCode: string;
-  private retrospective: Retrospective;
+
+  retrospective: Retrospective;
 
   notes: Note[] = [];
   currentCreationNoteType?: NoteTypes = null;
@@ -130,7 +131,7 @@ export class NotesPanelComponent implements OnInit {
   }
 
   public getNotesByType(noteType: NoteTypes): Note[] {
-    const notes = _.filter(this.notes, { type: noteType });
+    const notes = _(this.notes).filter({ type: noteType }).orderBy(['votes.length', 'content'], ['desc', 'asc']).value();
     return notes;
   }
 

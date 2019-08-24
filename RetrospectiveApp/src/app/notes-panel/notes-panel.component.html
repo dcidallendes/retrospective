@@ -1,5 +1,6 @@
-<div class="container">
-  <div fxLayout="row" fxLayout.xs="column" *ngIf="isLoggedIn" fxLayoutGap="20px">
+<div class="container" *ngIf="isLoggedIn">
+  <h2 *ngIf="retrospective">{{retrospective.name}}</h2>
+  <div fxLayout="row" fxLayout.xs="column" fxLayoutGap="20px">
     <mat-card *ngFor="let noteType of noteTypes">
       <mat-card-content>
         <mat-list role="list">
