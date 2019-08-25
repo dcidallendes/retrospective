@@ -1,0 +1,26 @@
+{
+  "name": "retrospective",
+  "version": "1.0.0",
+  "description": "Scrum retrospective application",
+  "scripts": {
+    "config": "ts-node ./src/config-env.ts",
+    "start": "node ./RetrospectiveServer/build/app.js",
+    "heroku-postbuild": "cd RetrospectiveApp  && npm install && ts-node ./config-env.ts && ng build --prod && cp -r ./dist ../RetrospectiveServer/public && cd ../RetrospectiveServer && npm install && npm run tsc --build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dcidallendes/retrospective.git"
+  },
+  "keywords": [
+    "retrospective",
+    "scrum",
+    "4l",
+    "agile"
+  ],
+  "author": "Diego Cid",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dcidallendes/retrospective/issues"
+  },
+  "homepage": "https://github.com/dcidallendes/retrospective#readme"
+}
