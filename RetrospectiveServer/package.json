@@ -22,6 +22,7 @@
     "shortid": "^2.2.14",
     "socket.io": "^2.2.0",
     "swagger-express-ts": "^1.0.1",
+    "ts-node": "^8.3.0",
     "ts-node-dev": "^1.0.0-pre.40",
     "typescript": "^3.5.3"
   },
