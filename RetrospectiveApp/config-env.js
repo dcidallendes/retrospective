@@ -9,7 +9,7 @@ const targetPath = `./src/environments/environment.prod.ts`;
 const envConfigFile = `
 export const environment = {
     production: true,
-    apiUrl: '${apiUrl}'},
+    apiUrl: '${apiUrl}',
     messagesUrl: '${messagesUrl}',
     googleClientId: '${googleClientId}'
 };
