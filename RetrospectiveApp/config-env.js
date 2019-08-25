@@ -1,5 +1,4 @@
-import { writeFile } from 'fs';
-
+const fs =  require('fs');
 require('dotenv').config();
 
 const apiUrl = process.env.API_URL;
@@ -16,7 +15,7 @@ export const environment = {
 };
 `;
 
-writeFile(targetPath, envConfigFile, (err) => {
+fs.writeFile(targetPath, envConfigFile, (err) => {
   if (err) {
        console.log(err);
   }
