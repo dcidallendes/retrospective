@@ -5,7 +5,7 @@
   "scripts": {
     "config": "ts-node ./src/config-env.ts",
     "start": "node ./RetrospectiveServer/build/app.js",
-    "heroku-postbuild": "cd RetrospectiveApp  && npm install && node ./config-env.js && npm install -g @angular/cli && npm install -g @angular-devkit/build-angular && npm run prod && cp -r ./dist ../RetrospectiveServer/public && cd ../RetrospectiveServer && npm install && npm run tsc --build"
+    "heroku-postbuild": "cd RetrospectiveApp  && npm install && node ./config-env.js && npm install -g @angular/cli && npm install -g @angular/compiler-cli && npm install -g @angular-devkit/build-angular && npm run prod && cp -r ./dist ../RetrospectiveServer/public && cd ../RetrospectiveServer && npm install && npm run tsc --build"
   },
   "repository": {
     "type": "git",
