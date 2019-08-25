@@ -4,7 +4,7 @@
   "description": "Scrum retrospective application",
   "scripts": {
     "config": "ts-node ./src/config-env.ts",
-    "start": "node ./RetrospectiveServer/build/app.js",
+    "start": "node ./RetrospectiveServer/build/index.js",
     "heroku-postbuild": "cd RetrospectiveApp  && npm install && node ./config-env.js && npm install -g @angular/cli && npm install -g @angular/compiler-cli && npm install -g @angular-devkit/build-angular && npm install -g typescript && npm run prod && cp -r ./dist ../RetrospectiveServer/public && cd ../RetrospectiveServer && npm install && npm run tsc --build"
   },
   "repository": {
