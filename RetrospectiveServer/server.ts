@@ -45,6 +45,9 @@ export class Server {
 
     //add routes
     this.routes();
+
+    //Angular routes should be configured last
+    this.configAngularApp();
   }
 
   /**
@@ -59,7 +62,6 @@ export class Server {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
     this.app.use(cookieParser());
-    this.configAngularApp();
   }
 
   private configAngularApp() {
