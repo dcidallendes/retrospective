@@ -1,5 +1,4 @@
-import { writeFile } from 'fs';
-
+const fs =  require('fs');
 require('dotenv').config();
 
 const apiUrl = process.env.API_URL;
@@ -10,13 +9,13 @@ const targetPath = `./src/environments/environment.prod.ts`;
 const envConfigFile = `
 export const environment = {
     production: true,
-    apiUrl: '${apiUrl}'},
+    apiUrl: '${apiUrl}',
     messagesUrl: '${messagesUrl}',
     googleClientId: '${googleClientId}'
 };
 `;
 
-writeFile(targetPath, envConfigFile, (err) => {
+fs.writeFile(targetPath, envConfigFile, (err) => {
   if (err) {
        console.log(err);
   }

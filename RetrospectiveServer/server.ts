@@ -1,6 +1,6 @@
 import * as bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
-import express, { Router } from "express";
+import express, { Router, Request, Response, NextFunction } from "express";
 import logger from "morgan";
 import * as path from "path";
 import { IndexRoute } from "./routes";
@@ -8,7 +8,6 @@ import { RetrospectivesRoute } from "./routes/retrospectives";
 import { NotesRoute } from "./routes/notes";
 import cors from 'cors';
 import 'reflect-metadata';
-import * as swagger from "swagger-express-ts";
 
 /**
  * The express server.
@@ -46,6 +45,9 @@ export class Server {
 
     //add routes
     this.routes();
+
+    //Angular routes should be configured last
+    this.configAngularApp();
   }
 
   /**
@@ -60,26 +62,14 @@ export class Server {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
     this.app.use(cookieParser());
-    this.app.use('/', express.static(path.join(__dirname, 'public')));
-    this.configSwagger()
   }
 
-
-  private configSwagger() {
-    this.app.use('/api-docs/swagger', express.static('swagger'));
-    this.app.use('/api-docs/swagger/assets', express.static( 'node_modules/swagger-ui-dist'));
-    this.app.use(bodyParser.json());
-    this.app.use(swagger.express(
-        {
-            definition : {
-                info : {
-                    title : "Retrospective API that supports Retrospective App" ,
-                    version : "1.0"
-                }
-                // Models can be defined here
-            }
-        }
-    ) );
+  private configAngularApp() {
+    const appPath = path.join(__dirname, '../public/dist/RetrospectiveApp');
+    this.app.use(express.static(appPath));
+    this.app.get('*', (req: Request, res: Response, next: NextFunction) => {
+      res.sendFile(`${appPath}/index.html`);
+    });
   }
 
   /**
